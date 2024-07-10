@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>React App</title>
+    <!-- Add Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!-- Add a fallback content -->
+    <div id="fallback" class="hidden">
+      <h1 class="text-4xl font-bold text-center mt-10 text-blue-600">Welcome to My Project</h1>
+      <p class="text-center mt-4">If you're seeing this, JavaScript might not be loading correctly.</p>
+    </div>
+    <script>
+      // Show fallback content if the root is empty after a short delay
+      setTimeout(function() {
+        if (document.getElementById('root').children.length === 0) {
+          document.getElementById('fallback').classList.remove('hidden');
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
