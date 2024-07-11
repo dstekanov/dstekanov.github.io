@@ -6,7 +6,15 @@ function HomePage() {
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-16">
           <h1 className="text-5xl font-extrabold mb-4">My Projects Portfolio</h1>
-          <p className="text-xl">Explore my journey through code and creativity</p>
+          <p className="text-xl mb-4">Explore my journey through code and creativity</p>
+          <a 
+            href="https://github.com/dstekanov" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-white hover:text-blue-200 transition duration-300"
+          >
+            Visit my GitHub
+          </a>
         </header>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -33,6 +41,8 @@ function ProjectCard({ title, description, link, linkText, icon }) {
         <p className="text-gray-600 mb-4">{description}</p>
         <a 
           href={link} 
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-block bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition duration-300"
         >
           {linkText}
