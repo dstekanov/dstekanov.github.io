@@ -27,6 +27,17 @@ function HomePage() {
           />
           {/* Add more ProjectCard components here for other projects */}
         </div>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <ProjectCard
+            title="QA dashboard"
+            description="A modern dashboard for visualizing QA test results with a clean UI and REST API."
+            link="https://dstekanov.github.io/qa-dashboard/"
+            linkText="QA dashboard"
+            icon="🔎"
+          />
+          {/* Add more ProjectCard components here for other projects */}
+        </div>
       </div>
     </div>
   );
