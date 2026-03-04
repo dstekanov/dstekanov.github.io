@@ -35,7 +35,7 @@ function PostCard({ post }) {
     boxShadow: hover ? '0 0 20px rgba(192,74,240,0.08)' : 'none',
     position: 'relative',
     overflow: 'hidden',
-    cursor: post.link ? 'none' : 'default',
+    cursor: post.link ? 'pointer' : 'default',
   };
 
   const inner = (
