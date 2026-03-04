@@ -32,7 +32,6 @@ body {
   color: var(--light);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  cursor: none;
 }
 
 /* === NOISE OVERLAY === */
@@ -44,54 +43,6 @@ body::before {
   pointer-events: none;
   z-index: 1000;
   opacity: 0.25;
-}
-
-/* === CUSTOM CURSOR === */
-.cursor {
-  width: 10px;
-  height: 10px;
-  background: var(--pulse);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.2s, height 0.2s, background 0.3s, transform 0.1s;
-  mix-blend-mode: screen;
-}
-
-.cursor-trail {
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--pulse);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: left 0.12s ease, top 0.12s ease, border-color 0.3s;
-  mix-blend-mode: screen;
-  opacity: 0.5;
-}
-
-.cursor.active {
-  transform: translate(-50%, -50%) scale(1.8);
-  background: var(--drain);
-}
-
-.cursor-trail.active {
-  border-color: var(--drain);
-  opacity: 0.3;
-}
-
-@media (hover: none) {
-  .cursor,
-  .cursor-trail {
-    display: none;
-  }
-  body {
-    cursor: auto;
-  }
 }
 
 /* === GLITCH EFFECT === */

@@ -1,5 +1,4 @@
 import React from 'react';
-import CursorEffect from './CursorEffect';
 import Nav from './Nav';
 import HeroSection from './HeroSection';
 import ProjectsSection from './ProjectsSection';
@@ -30,7 +29,7 @@ function Footer() {
           href="https://github.com/dstekanov"
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: '#5a607a', textDecoration: 'none', cursor: 'none' }}
+          style={{ color: '#5a607a', textDecoration: 'none' }}
         >
           dstekanov
         </a>
@@ -42,7 +41,6 @@ function Footer() {
 function HomePage() {
   return (
     <>
-      <CursorEffect />
       <Nav />
       <main>
         <HeroSection />

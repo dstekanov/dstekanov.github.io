@@ -231,7 +231,7 @@ function SocialLink({ href, label, accent, desc }) {
         textDecoration: 'none',
         transition: 'all 0.2s ease',
         boxShadow: hover ? `0 0 14px ${accent}33` : 'none',
-        cursor: 'none',
+        cursor: 'pointer',
         minWidth: desc ? '100px' : 'auto',
       }}
     >
