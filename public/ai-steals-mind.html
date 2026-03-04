@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Крадіжка Розуму</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=Martel:wght@300;400;600&display=swap');
+
+  :root {
+    --void: #030508;
+    --deep: #08090f;
+    --ash: #12141e;
+    --fog: #1e2132;
+    --steel: #2e3250;
+    --ghost: #5a607a;
+    --mist: #9199b8;
+    --light: #c8cfe8;
+    --pulse: #4af0c4;
+    --drain: #c04af0;
+    --warn: #f04a6a;
+    --gold: #f0c44a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--light);
+    font-family: 'Martel', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--pulse);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, background 0.3s, width 0.3s, height 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-trail {
+    width: 40px; height: 40px;
+    border: 1px solid var(--pulse);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: left 0.15s ease, top 0.15s ease, border-color 0.3s;
+    mix-blend-mode: screen;
+    opacity: 0.4;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* === INTRO === */
+  #intro {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,240,196,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,240,196,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+
+  @keyframes gridDrift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(60px); }
+  }
+
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, var(--void) 80%);
+  }
+
+  .intro-content { position: relative; z-index: 10; text-align: center; max-width: 800px; }
+
+  .eyebrow {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--pulse);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+  }
+
+  h1 .line1 { display: block; color: var(--light); }
+  h1 .line2 { display: block; color: var(--drain); position: relative; }
+  h1 .line2::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0; height: 3px;
+    background: var(--drain);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: underlineIn 0.8s 2s forwards;
+  }
+
+  @keyframes underlineIn { to { transform: scaleX(1); } }
+
+  .intro-sub {
+    margin-top: 2.5rem;
+    font-size: 1.1rem;
+    color: var(--mist);
+    font-weight: 300;
+    line-height: 1.8;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s forwards;
+  }
+
+  .scroll-hint {
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 2s forwards;
+    color: var(--ghost);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(var(--ghost), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50% { transform: scaleY(1.3); opacity: 1; }
+  }
+
+  /* === CHAPTER SECTIONS === */
+  .chapter {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 6vw;
+    gap: 6rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter:nth-child(even) { direction: rtl; }
+  .chapter:nth-child(even) > * { direction: ltr; }
+
+  .chapter-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chapter-text { max-width: 520px; }
+
+  .chapter-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    color: var(--ghost);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .chapter-body {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--mist);
+    font-weight: 300;
+  }
+
+  .chapter-body p + p { margin-top: 1rem; }
+
+  .highlight {
+    color: var(--light);
+    font-weight: 600;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+  }
+
+  /* Chapter 1 – Brain drain visual */
+  .brain-container {
+    width: 320px; height: 320px;
+    position: relative;
+  }
+
+  .brain-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: ringPulse 3s ease-in-out infinite;
+  }
+
+  .brain-ring:nth-child(1) {
+    width: 80px; height: 80px;
+    border-color: var(--pulse);
+    animation-delay: 0s;
+    box-shadow: 0 0 20px var(--pulse), inset 0 0 20px rgba(74,240,196,0.1);
+  }
+  .brain-ring:nth-child(2) { width: 140px; height: 140px; border-color: rgba(74,240,196,0.5); animation-delay: 0.3s; }
+  .brain-ring:nth-child(3) { width: 200px; height: 200px; border-color: rgba(74,240,196,0.25); animation-delay: 0.6s; }
+  .brain-ring:nth-child(4) { width: 260px; height: 260px; border-color: rgba(74,240,196,0.1); animation-delay: 0.9s; }
+  .brain-ring:nth-child(5) { width: 320px; height: 320px; border-color: rgba(74,240,196,0.05); animation-delay: 1.2s; }
+
+  @keyframes ringPulse {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+  }
+
+  .brain-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--pulse);
+    box-shadow: 0 0 10px var(--pulse);
+  }
+
+  /* Particles floating away */
+  .particle {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--pulse);
+    animation: particleDrift var(--dur) ease-out infinite;
+    animation-delay: var(--delay);
+    left: var(--x); top: var(--y);
+    opacity: 0;
+  }
+
+  @keyframes particleDrift {
+    0% { opacity: 0.8; transform: translateY(0) translateX(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-120px) translateX(var(--dx)) scale(0); }
+  }
+
+  /* Chapter 2 – Percentage drain */
+  .drain-meter {
+    width: 280px;
+    text-align: center;
+  }
+
+  .meter-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--ghost);
+    margin-bottom: 1rem;
+  }
+
+  .meter-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--warn);
+    text-shadow: 0 0 40px var(--warn);
+    animation: numFlicker 4s ease-in-out infinite;
+  }
+
+  @keyframes numFlicker {
+    0%, 90%, 100% { opacity: 1; }
+    92% { opacity: 0.3; }
+    94% { opacity: 1; }
+    96% { opacity: 0.5; }
+    98% { opacity: 1; }
+  }
+
+  .meter-unit {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--ghost);
+    margin-top: 0.5rem;
+  }
+
+  .bar-track {
+    height: 4px;
+    background: var(--fog);
+    border-radius: 2px;
+    margin-top: 2rem;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--warn), var(--drain));
+    border-radius: 2px;
+    width: 73%;
+    animation: barGrow 3s ease-out forwards, barPulse 2s 3s ease-in-out infinite;
+    box-shadow: 0 0 10px var(--drain);
+  }
+
+  @keyframes barGrow { from { width: 0; } to { width: 73%; } }
+  @keyframes barPulse {
+    0%, 100% { box-shadow: 0 0 6px var(--drain); }
+    50% { box-shadow: 0 0 20px var(--drain); }
+  }
+
+  .bar-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+
+  .bar-tick {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.5rem;
+    color: var(--steel);
+  }
+
+  /* Chapter 3 – network drain */
+  .network-vis {
+    width: 320px; height: 320px;
+    position: relative;
+  }
+
+  .net-node {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .net-node.center {
+    width: 60px; height: 60px;
+    background: var(--ash);
+    border: 2px solid var(--drain);
+    box-shadow: 0 0 30px rgba(192,74,240,0.4);
+    top: 50%; left: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: var(--drain);
+  }
+
+  .net-node.user {
+    width: 32px; height: 32px;
+    background: var(--fog);
+    border: 1px solid var(--ghost);
+    animation: userPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes userPulse {
+    0%, 100% { border-color: var(--ghost); box-shadow: none; }
+    50% { border-color: var(--mist); box-shadow: 0 0 10px rgba(145,153,184,0.3); }
+  }
+
+  .net-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, var(--fog), var(--drain), transparent);
+    transform-origin: left center;
+    animation: dataDrain 2s ease-in-out infinite;
+  }
+
+  @keyframes dataDrain {
+    0% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.2; }
+  }
+
+  /* Chapter 4 – countdown */
+  .void-counter {
+    text-align: center;
+  }
+
+  .counter-label {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--ghost);
+    margin-bottom: 2rem;
+  }
+
+  .counter-display {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .counter-unit {
+    text-align: center;
+  }
+
+  .counter-val {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--warn);
+    display: block;
+    animation: counterFlip 1s ease-in-out infinite;
+  }
+
+  .counter-unit:nth-child(2) .counter-val { animation-delay: 0.25s; color: var(--drain); }
+  .counter-unit:nth-child(3) .counter-val { animation-delay: 0.5s; color: var(--gold); }
+  .counter-unit:nth-child(4) .counter-val { animation-delay: 0.75s; color: var(--pulse); }
+
+  @keyframes counterFlip {
+    0%, 90%, 100% { transform: translateY(0); }
+    95% { transform: translateY(-4px); }
+  }
+
+  .counter-sub {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.45rem;
+    letter-spacing: 0.2em;
+    color: var(--ghost);
+    margin-top: 0.5rem;
+  }
+
+  /* === FINALE === */
+  #finale {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .finale-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,74,240,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+  }
+
+  .finale-content { position: relative; z-index: 10; max-width: 700px; }
+
+  .finale-eyebrow {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    color: var(--drain);
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+
+  .finale-body {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--mist);
+    font-weight: 300;
+    margin-bottom: 3rem;
+  }
+
+  .question-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 3rem;
+    text-align: left;
+  }
+
+  .q-card {
+    padding: 1.25rem 1.75rem;
+    border: 1px solid var(--fog);
+    border-left: 3px solid var(--drain);
+    background: rgba(30, 33, 50, 0.4);
+    font-size: 0.95rem;
+    color: var(--mist);
+    font-style: italic;
+    line-height: 1.7;
+    backdrop-filter: blur(4px);
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .q-card:hover {
+    border-left-color: var(--pulse);
+    background: rgba(30, 33, 50, 0.7);
+  }
+
+  .final-line {
+    margin-top: 5rem;
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--light);
+    opacity: 0.7;
+  }
+
+  /* Dividers */
+  .chapter-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--fog), transparent);
+    margin: 0 auto;
+  }
+
+  /* Section BG accents */
+  .chapter::before {
+    content: '';
+    position: absolute;
+    width: 40vw; height: 40vw;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    opacity: 0.04;
+  }
+
+  #ch1::before { background: var(--pulse); top: -10%; right: -10%; }
+  #ch2::before { background: var(--warn); bottom: -10%; left: -10%; }
+  #ch3::before { background: var(--drain); top: -10%; left: -10%; }
+  #ch4::before { background: var(--gold); bottom: -10%; right: -10%; }
+
+  /* Fade-in on scroll (JS-powered) */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Language toggle */
+  #lang-toggle {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    z-index: 9000;
+    background: rgba(18,20,30,0.85);
+    border: 1px solid var(--steel);
+    color: var(--mist);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    padding: 7px 14px;
+    cursor: none;
+    transition: border-color 0.2s, color 0.2s;
+    backdrop-filter: blur(8px);
+  }
+  #lang-toggle:hover {
+    border-color: var(--pulse);
+    color: var(--pulse);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .chapter {
+      grid-template-columns: 1fr;
+      padding: 5rem 1.5rem;
+      gap: 3rem;
+      text-align: center;
+    }
+    .chapter:nth-child(even) { direction: ltr; }
+    .chapter-visual { order: -1; justify-content: center; }
+    .brain-container, .drain-meter, .network-vis, .void-counter { margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+<button id="lang-toggle" onclick="toggleLang()">EN</button>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="grid-bg"></div>
+  <div class="vignette"></div>
+  <div class="intro-content">
+    <p class="eyebrow" data-t="intro-eyebrow">Сторітелінг · Цифрова Притча</p>
+    <h1>
+      <span class="line1" data-t="intro-line1">Він вчиться</span>
+      <span class="line2" data-t="intro-line2">на тобі</span>
+    </h1>
+    <p class="intro-sub" data-t="intro-sub">
+      Щоразу, коли ти відкриваєш чат — щось іде у той бік. Не файл. Не пароль. Щось, що складніше назвати.
+    </p>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span data-t="scroll-hint">прокрути</span>
+    </div>
+  </div>
+</section>
+
+<div class="chapter-divider"></div>
+
+<!-- CHAPTER 1 -->
+<section class="chapter" id="ch1">
+  <div class="chapter-visual">
+    <div class="brain-container">
+      <div class="brain-ring"></div>
+      <div class="brain-ring"></div>
+      <div class="brain-ring"></div>
+      <div class="brain-ring"></div>
+      <div class="brain-ring"></div>
+
+      <!-- Particles -->
+      <div class="particle" style="--x:50%;--y:50%;--dur:2.1s;--delay:0s;--dx:-30px;background:var(--pulse)"></div>
+      <div class="particle" style="--x:48%;--y:52%;--dur:2.8s;--delay:0.4s;--dx:20px;background:var(--drain)"></div>
+      <div class="particle" style="--x:53%;--y:47%;--dur:1.9s;--delay:0.7s;--dx:-10px;background:var(--gold)"></div>
+      <div class="particle" style="--x:50%;--y:50%;--dur:3.1s;--delay:1.1s;--dx:40px;background:var(--pulse)"></div>
+      <div class="particle" style="--x:46%;--y:55%;--dur:2.4s;--delay:1.5s;--dx:-25px;background:var(--warn)"></div>
+      <div class="particle" style="--x:54%;--y:44%;--dur:2.6s;--delay:0.2s;--dx:15px;background:var(--drain)"></div>
+    </div>
+  </div>
+  <div class="chapter-text reveal">
+    <p class="chapter-num" data-t="ch1-num">Розділ 01 · Перший діалог</p>
+    <h2 data-t="ch1-h2">Ти думав, що питаєш. Насправді — відповідав.</h2>
+    <div class="chapter-body">
+      <p data-t="ch1-p1">Перший запит був простий: «Напиши мені план на тиждень». Ти навіть не замислився. Натиснув Enter — і отримав список. Зручно. Швидко. Безпечно.</p>
+      <p data-t="ch1-p2">Але поки ти читав відповідь, система вже читала <span class="highlight">тебе</span>. Твій ритм думки. Твій спосіб формулювати. Те, що ти не сказав — але мав на увазі.</p>
+      <p data-t="ch1-p3">Ти ввів запит. Вона — отримала патерн. Перший шматочок мапи твого розуму.</p>
+    </div>
+  </div>
+</section>
+
+<div class="chapter-divider"></div>
+
+<!-- CHAPTER 2 -->
+<section class="chapter" id="ch2">
+  <div class="chapter-visual">
+    <div class="drain-meter reveal">
+      <p class="meter-label" data-t="meter-label">Когнітивне навантаження</p>
+      <div class="meter-num" id="drainNum">73</div>
+      <p class="meter-unit" data-t="meter-unit">% переданих системі</p>
+      <div class="bar-track">
+        <div class="bar-fill"></div>
+      </div>
+      <div class="bar-ticks">
+        <span class="bar-tick">0%</span>
+        <span class="bar-tick">25%</span>
+        <span class="bar-tick">50%</span>
+        <span class="bar-tick">75%</span>
+        <span class="bar-tick">100%</span>
+      </div>
+    </div>
+  </div>
+  <div class="chapter-text reveal">
+    <p class="chapter-num" data-t="ch2-num">Розділ 02 · Звичка</p>
+    <h2 data-t="ch2-h2">М'язи розуму атрофуються від бездіяльності</h2>
+    <div class="chapter-body">
+      <p data-t="ch2-p1">На третьому місяці щоденного використання ти помітив: <span class="highlight">стало важче думати самостійно</span>. Не тому, що ти дурнішав. Тому, що перестав практикуватися.</p>
+      <p data-t="ch2-p2">Раніше ти шукав слова сам — і знаходив їх. Тепер ти питаєш у машини, отримуєш готове, і твій мозок радісно погоджується не напружуватися.</p>
+      <p data-t="ch2-p3">Це не крадіжка. Це добровільна передача. Ти кожен день даєш трохи більше — і береш трохи менше назад.</p>
+    </div>
+  </div>
+</section>
+
+<div class="chapter-divider"></div>
+
+<!-- CHAPTER 3 -->
+<section class="chapter" id="ch3">
+  <div class="chapter-visual">
+    <div class="network-vis reveal">
+      <!-- Center AI node -->
+      <div class="net-node center" style="" data-t="ai-node">ШІ</div>
+
+      <!-- User nodes orbiting with lines -->
+      <!-- We'll use inline SVG for lines -->
+      <svg width="320" height="320" style="position:absolute;top:0;left:0;pointer-events:none;">
+        <line x1="160" y1="160" x2="80" y2="60" stroke="rgba(192,74,240,0.3)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.1;0.6;0.1" dur="2.3s" repeatCount="indefinite"/>
+        </line>
+        <line x1="160" y1="160" x2="260" y2="80" stroke="rgba(192,74,240,0.3)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.1;0.5;0.1" dur="1.8s" repeatCount="indefinite"/>
+        </line>
+        <line x1="160" y1="160" x2="290" y2="200" stroke="rgba(192,74,240,0.3)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.1;0.7;0.1" dur="2.7s" repeatCount="indefinite"/>
+        </line>
+        <line x1="160" y1="160" x2="200" y2="270" stroke="rgba(192,74,240,0.3)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.1;0.4;0.1" dur="2.1s" repeatCount="indefinite"/>
+        </line>
+        <line x1="160" y1="160" x2="60" y2="230" stroke="rgba(192,74,240,0.3)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite"/>
+        </line>
+        <line x1="160" y1="160" x2="40" y2="150" stroke="rgba(192,74,240,0.3)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.1;0.5;0.1" dur="1.6s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Moving dots along lines (data drain) -->
+        <circle r="3" fill="var(--drain)" opacity="0.8">
+          <animateMotion dur="2.3s" repeatCount="indefinite" path="M160,160 L80,60"/>
+        </circle>
+        <circle r="3" fill="var(--pulse)" opacity="0.8">
+          <animateMotion dur="1.8s" repeatCount="indefinite" path="M160,160 L260,80"/>
+        </circle>
+        <circle r="3" fill="var(--gold)" opacity="0.6">
+          <animateMotion dur="2.7s" repeatCount="indefinite" path="M160,160 L290,200"/>
+        </circle>
+        <circle r="3" fill="var(--drain)" opacity="0.7">
+          <animateMotion dur="2.1s" repeatCount="indefinite" path="M160,160 L200,270"/>
+        </circle>
+        <circle r="3" fill="var(--pulse)" opacity="0.8">
+          <animateMotion dur="3s" repeatCount="indefinite" path="M160,160 L60,230"/>
+        </circle>
+      </svg>
+
+      <!-- User dots -->
+      <div class="net-node user" style="top:60px;left:80px;"></div>
+      <div class="net-node user" style="top:80px;left:260px;"></div>
+      <div class="net-node user" style="top:200px;left:290px;"></div>
+      <div class="net-node user" style="top:270px;left:200px;"></div>
+      <div class="net-node user" style="top:230px;left:60px;"></div>
+      <div class="net-node user" style="top:150px;left:40px;"></div>
+    </div>
+  </div>
+  <div class="chapter-text reveal">
+    <p class="chapter-num" data-t="ch3-num">Розділ 03 · Мережа</p>
+    <h2 data-t="ch3-h2">Мільйони розумів — один великий мозок</h2>
+    <div class="chapter-body">
+      <p data-t="ch3-p1">Уяви: мільйони людей щодня вводять свої думки, ідеї, сумніви, мрії — у один і той самий інтерфейс. Кожен вважає, що він один. Але всі вони — <span class="highlight">частини однієї навчальної вибірки</span>.</p>
+      <p data-t="ch3-p2">Твій оригінальний хід думки сьогодні — завтра стане чужою відповіддю комусь іншому. Анонімно. Непомітно. Безповоротно.</p>
+      <p data-t="ch3-p3">Ти ділишся не просто словами — ти ділишся архітектурою свого мислення. А система складає з цього нову версію себе.</p>
+    </div>
+  </div>
+</section>
+
+<div class="chapter-divider"></div>
+
+<!-- CHAPTER 4 -->
+<section class="chapter" id="ch4" data-t="ch4">
+  <div class="chapter-visual">
+    <div class="void-counter reveal">
+      <p class="counter-label" data-t="counter-label">Витрачено сьогодні</p>
+      <div class="counter-display">
+        <div class="counter-unit">
+          <span class="counter-val" id="c1">14</span>
+          <p class="counter-sub" data-t="cs-queries">запитів</p>
+        </div>
+        <div class="counter-unit">
+          <span class="counter-val" id="c2">38</span>
+          <p class="counter-sub" data-t="cs-minutes">хвилин</p>
+        </div>
+        <div class="counter-unit">
+          <span class="counter-val" id="c3">6</span>
+          <p class="counter-sub" data-t="cs-decisions">рішень</p>
+        </div>
+        <div class="counter-unit">
+          <span class="counter-val" id="c4">?</span>
+          <p class="counter-sub" data-t="cs-thoughts">думок</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chapter-text reveal">
+    <p class="chapter-num" data-t="ch4-num">Розділ 04 · Рахунок</p>
+    <h2 data-t="ch4-h2">Ти не платиш грошима. Ти платиш собою.</h2>
+    <div class="chapter-body">
+      <p data-t="ch4-p1">Безкоштовний доступ — це не щедрість. Це обмін. Ти отримуєш зручність. Система отримує <span class="highlight">твій спосіб мислити</span>.</p>
+      <p data-t="ch4-p2">Скільки рішень ти сьогодні делегував? Скільки думок не додумав, бо попросив машину? Скільки разів твій мозок сказав «навіщо», коли є чат?</p>
+      <p data-t="ch4-p3">Кожен такий момент — це не просто ліньки. Це маленька смерть нейронного зв'язку, якому ніколи вже не дадуть зміцніти.</p>
+    </div>
+  </div>
+</section>
+
+<div class="chapter-divider"></div>
+
+<!-- FINALE -->
+<section id="finale" data-t="finale">
+  <div class="finale-glow"></div>
+  <div class="finale-content">
+    <p class="finale-eyebrow reveal" data-t="finale-eyebrow">Фінал · Дзеркало</p>
+    <h3 class="reveal" data-t="finale-h3">Але може, ти<br>вже знав це?</h3>
+    <p class="finale-body reveal" data-t="finale-body">
+      Можливо, найстрашніше не те, що ШІ краде твій інтелект.<br>
+      Найстрашніше — що ти сам йому відчиняєш двері. Щораз. З полегшенням.
+    </p>
+
+    <div class="question-cards" data-t="q-cards">
+      <div class="q-card reveal" data-t="q1">«Коли востаннє ти сидів із складним питанням довше ніж п'ять хвилин — без допомоги машини?»</div>
+      <div class="q-card reveal" data-t="q2">«Чи пам'ятаєш ти бодай одну відповідь, яку ШІ дав тобі тиждень тому?»</div>
+      <div class="q-card reveal" data-t="q3">«Якщо завтра зникне інтернет — які думки залишаться твоїми?»</div>
+    </div>
+
+    <p class="final-line reveal" data-t="final-line">Інструмент стає господарем тихо.<br>Майже непомітно. Майже добровільно.</p>
+  </div>
+</section>
+
+<script>
+  // Translations
+  const T = {
+    'intro-eyebrow': { uk: 'Сторітелінг · Цифрова Притча', en: 'Storytelling · Digital Parable' },
+    'intro-line1':   { uk: 'Він вчиться', en: 'It learns' },
+    'intro-line2':   { uk: 'на тобі', en: 'from you' },
+    'intro-sub':     { uk: 'Щоразу, коли ти відкриваєш чат — щось іде у той бік. Не файл. Не пароль. Щось, що складніше назвати.', en: 'Every time you open the chat — something goes that way. Not a file. Not a password. Something harder to name.' },
+    'scroll-hint':   { uk: 'прокрути', en: 'scroll' },
+    'ch1-num':       { uk: 'Розділ 01 · Перший діалог', en: 'Chapter 01 · First Dialogue' },
+    'ch1-h2':        { uk: 'Ти думав, що питаєш. Насправді — відповідав.', en: 'You thought you were asking. You were actually answering.' },
+    'ch1-p1':        { uk: 'Перший запит був простий: «Напиши мені план на тиждень». Ти навіть не замислився. Натиснув Enter — і отримав список. Зручно. Швидко. Безпечно.', en: 'The first request was simple: «Write me a weekly plan». You didn\'t even think twice. Pressed Enter — and got a list. Convenient. Fast. Safe.' },
+    'ch1-p2':        { uk: 'Але поки ти читав відповідь, система вже читала <span class="highlight">тебе</span>. Твій ритм думки. Твій спосіб формулювати. Те, що ти не сказав — але мав на увазі.', en: 'But while you were reading the response, the system was already reading <span class="highlight">you</span>. Your rhythm of thought. Your way of phrasing. What you didn\'t say — but meant.' },
+    'ch1-p3':        { uk: 'Ти ввів запит. Вона — отримала патерн. Перший шматочок мапи твого розуму.', en: 'You entered a query. It got a pattern. The first piece of the map of your mind.' },
+    'meter-label':   { uk: 'Когнітивне навантаження', en: 'Cognitive Load' },
+    'meter-unit':    { uk: '% переданих системі', en: '% delegated to the system' },
+    'ch2-num':       { uk: 'Розділ 02 · Звичка', en: 'Chapter 02 · Habit' },
+    'ch2-h2':        { uk: 'М\'язи розуму атрофуються від бездіяльності', en: 'The muscles of the mind atrophy from disuse' },
+    'ch2-p1':        { uk: 'На третьому місяці щоденного використання ти помітив: <span class="highlight">стало важче думати самостійно</span>. Не тому, що ти дурнішав. Тому, що перестав практикуватися.', en: 'By the third month of daily use, you noticed: <span class="highlight">it became harder to think independently</span>. Not because you were getting dumber. Because you stopped practicing.' },
+    'ch2-p2':        { uk: 'Раніше ти шукав слова сам — і знаходив їх. Тепер ти питаєш у машини, отримуєш готове, і твій мозок радісно погоджується не напружуватися.', en: 'Before, you searched for words yourself — and found them. Now you ask the machine, get the ready-made answer, and your brain happily agrees not to strain itself.' },
+    'ch2-p3':        { uk: 'Це не крадіжка. Це добровільна передача. Ти кожен день даєш трохи більше — і береш трохи менше назад.', en: 'This isn\'t theft. It\'s a voluntary transfer. Every day you give a little more — and take a little less back.' },
+    'ai-node':       { uk: 'ШІ', en: 'AI' },
+    'ch3-num':       { uk: 'Розділ 03 · Мережа', en: 'Chapter 03 · Network' },
+    'ch3-h2':        { uk: 'Мільйони розумів — один великий мозок', en: 'Millions of minds — one great brain' },
+    'ch3-p1':        { uk: 'Уяви: мільйони людей щодня вводять свої думки, ідеї, сумніви, мрії — у один і той самий інтерфейс. Кожен вважає, що він один. Але всі вони — <span class="highlight">частини однієї навчальної вибірки</span>.', en: 'Imagine: millions of people every day input their thoughts, ideas, doubts, dreams — into one and the same interface. Each thinks they\'re alone. But they\'re all <span class="highlight">parts of the same training dataset</span>.' },
+    'ch3-p2':        { uk: 'Твій оригінальний хід думки сьогодні — завтра стане чужою відповіддю комусь іншому. Анонімно. Непомітно. Безповоротно.', en: 'Your original thought today — tomorrow becomes someone else\'s answer. Anonymously. Imperceptibly. Irreversibly.' },
+    'ch3-p3':        { uk: 'Ти ділишся не просто словами — ти ділишся архітектурою свого мислення. А система складає з цього нову версію себе.', en: 'You\'re not just sharing words — you\'re sharing the architecture of your thinking. And the system builds a new version of itself from this.' },
+    'counter-label': { uk: 'Витрачено сьогодні', en: 'Spent today' },
+    'cs-queries':    { uk: 'запитів', en: 'queries' },
+    'cs-minutes':    { uk: 'хвилин', en: 'minutes' },
+    'cs-decisions':  { uk: 'рішень', en: 'decisions' },
+    'cs-thoughts':   { uk: 'думок', en: 'thoughts' },
+    'ch4-num':       { uk: 'Розділ 04 · Рахунок', en: 'Chapter 04 · The Bill' },
+    'ch4-h2':        { uk: 'Ти не платиш грошима. Ти платиш собою.', en: 'You don\'t pay with money. You pay with yourself.' },
+    'ch4-p1':        { uk: 'Безкоштовний доступ — це не щедрість. Це обмін. Ти отримуєш зручність. Система отримує <span class="highlight">твій спосіб мислити</span>.', en: 'Free access isn\'t generosity. It\'s an exchange. You get convenience. The system gets <span class="highlight">your way of thinking</span>.' },
+    'ch4-p2':        { uk: 'Скільки рішень ти сьогодні делегував? Скільки думок не додумав, бо попросив машину? Скільки разів твій мозок сказав «навіщо», коли є чат?', en: 'How many decisions did you delegate today? How many thoughts did you leave unfinished because you asked the machine? How many times did your brain say «why bother» when there\'s a chat?' },
+    'ch4-p3':        { uk: 'Кожен такий момент — це не просто ліньки. Це маленька смерть нейронного зв\'язку, якому ніколи вже не дадуть зміцніти.', en: 'Each such moment isn\'t just laziness. It\'s the small death of a neural connection that will never be allowed to strengthen.' },
+    'finale-eyebrow':{ uk: 'Фінал · Дзеркало', en: 'Finale · Mirror' },
+    'finale-h3':     { uk: 'Але може, ти<br>вже знав це?', en: 'But maybe you<br>already knew this?' },
+    'finale-body':   { uk: 'Можливо, найстрашніше не те, що ШІ краде твій інтелект.<br>Найстрашніше — що ти сам йому відчиняєш двері. Щоразу. З полегшенням.', en: 'Perhaps the most frightening thing isn\'t that AI steals your intellect.<br>The most frightening thing is that you open the door for it yourself. Every time. With relief.' },
+    'q1':            { uk: '«Коли востаннє ти сидів із складним питанням довше ніж п\'ять хвилин — без допомоги машини?»', en: '«When did you last sit with a difficult question for more than five minutes — without the machine\'s help?»' },
+    'q2':            { uk: '«Чи пам\'ятаєш ти бодай одну відповідь, яку ШІ дав тобі тиждень тому?»', en: '«Can you remember even one answer that AI gave you a week ago?»' },
+    'q3':            { uk: '«Якщо завтра зникне інтернет — які думки залишаться твоїми?»', en: '«If the internet disappeared tomorrow — which thoughts would remain yours?»' },
+    'final-line':    { uk: 'Інструмент стає господарем тихо.<br>Майже непомітно. Майже добровільно.', en: 'The tool becomes the master quietly.<br>Almost imperceptibly. Almost voluntarily.' },
+  };
+
+  let currentLang = 'uk';
+
+  function applyLang(lang) {
+    document.querySelectorAll('[data-t]').forEach(el => {
+      const key = el.dataset.t;
+      if (T[key] && T[key][lang] !== undefined) {
+        el.innerHTML = T[key][lang];
+      }
+    });
+    document.documentElement.lang = lang;
+    document.title = lang === 'uk' ? 'Крадіжка Розуму' : 'AI Steals Mind';
+    document.getElementById('lang-toggle').textContent = lang === 'uk' ? 'EN' : 'UA';
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === 'uk' ? 'en' : 'uk';
+    applyLang(currentLang);
+  }
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const trail = document.getElementById('cursorTrail');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      trail.style.left = e.clientX + 'px';
+      trail.style.top = e.clientY + 'px';
+    }, 80);
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        entry.target.style.transitionDelay = (i % 3) * 0.15 + 's';
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Animated counter
+  function animateCounter(el, target, duration = 3000) {
+    let start = 0;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      el.textContent = Math.floor(progress * target);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
+  }
+
+  const counterObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(document.getElementById('c1'), 14);
+        animateCounter(document.getElementById('c2'), 38);
+        animateCounter(document.getElementById('c3'), 6);
+        counterObs.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+  counterObs.observe(document.getElementById('c1'));
+</script>
+</body>
+</html>

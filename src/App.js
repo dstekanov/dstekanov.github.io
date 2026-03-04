@@ -1,17 +1,17 @@
 import React from 'react';
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { LanguageProvider } from './context/LanguageContext';
 import HomePage from './components/HomePage';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
+    <LanguageProvider>
+      <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          {/* Add other routes here if needed */}
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </LanguageProvider>
   );
 }
 

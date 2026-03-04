@@ -1,65 +1,71 @@
 import React from 'react';
+import CursorEffect from './CursorEffect';
+import Nav from './Nav';
+import HeroSection from './HeroSection';
+import ProjectsSection from './ProjectsSection';
+import BlogSection from './BlogSection';
+import { useLanguage } from '../context/LanguageContext';
 
-function HomePage() {
+function Footer() {
+  const { t } = useLanguage();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold mb-4">My Projects Portfolio</h1>
-          <p className="text-xl mb-4">Explore my journey through code and creativity</p>
-          <a 
-            href="https://github.com/dstekanov" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-white hover:text-blue-200 transition duration-300"
-          >
-            Visit my GitHub
-          </a>
-        </header>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <ProjectCard
-            title="Tic-Tac-Toe Game"
-            description="A classic game with an unbeatable AI opponent. Test your skills against the machine!"
-            link="https://dstekanov.github.io/tictactoe-project"
-            linkText="Play Tic-Tac-Toe"
-            icon="🎮"
-          />
-          {/* Add more ProjectCard components here for other projects */}
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          <ProjectCard
-            title="QA dashboard"
-            description="A modern dashboard for visualizing QA test results with a clean UI and REST API."
-            link="https://dstekanov.github.io/qa-dashboard/"
-            linkText="QA dashboard"
-            icon="🔎"
-          />
-          {/* Add more ProjectCard components here for other projects */}
-        </div>
-      </div>
-    </div>
+    <footer style={{
+      borderTop: '1px solid #1e2132',
+      padding: '32px 24px',
+      textAlign: 'center',
+    }}>
+      <p style={{
+        fontFamily: 'Space Mono, monospace',
+        fontSize: '0.68rem',
+        color: '#2e3250',
+        letterSpacing: '0.08em',
+      }}>
+        {t('footer', 'made')}{' '}
+        <span style={{ color: '#f04a6a' }}>♥</span>{' '}
+        {t('footer', 'and')}{' '}
+        <span style={{ color: '#4af0c4' }}>{t('footer', 'curiosity')}</span>
+        {' — '}
+        <a
+          href="https://github.com/dstekanov"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: '#5a607a', textDecoration: 'none', cursor: 'none' }}
+        >
+          dstekanov
+        </a>
+      </p>
+    </footer>
   );
 }
 
-function ProjectCard({ title, description, link, linkText, icon }) {
+function HomePage() {
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105">
-      <div className="p-6">
-        <div className="text-4xl mb-4">{icon}</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{title}</h2>
-        <p className="text-gray-600 mb-4">{description}</p>
-        <a 
-          href={link} 
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition duration-300"
-        >
-          {linkText}
-        </a>
-      </div>
-    </div>
+    <>
+      <CursorEffect />
+      <Nav />
+      <main>
+        <HeroSection />
+
+        {/* Section divider */}
+        <div style={{
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, #1e2132, transparent)',
+          margin: '0 24px',
+        }} />
+
+        <ProjectsSection />
+
+        <div style={{
+          height: '1px',
+          background: 'linear-gradient(90deg, transparent, #1e2132, transparent)',
+          margin: '0 24px',
+        }} />
+
+        <BlogSection />
+      </main>
+      <Footer />
+    </>
   );
 }
 

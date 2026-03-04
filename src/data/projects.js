@@ -1,0 +1,76 @@
+export const projects = [
+  {
+    id: 1,
+    title: 'playwright-ai-observer',
+    description: {
+      en: 'AI-powered visual QA observer for Playwright tests. Find UI bugs without baselines using GPT-4 Vision.',
+      uk: 'AI-спостерігач для Playwright тестів. Знаходить UI баги без базових знімків — через GPT-4 Vision.',
+    },
+    github: 'https://github.com/dstekanov/playwright-ai-observer',
+    tags: ['ai', 'qa', 'playwright'],
+    icon: '🤖',
+    status: 'wip',
+  },
+  {
+    id: 2,
+    title: 'grafana-log-analyzer',
+    description: {
+      en: 'CLI tool for analyzing Grafana Loki logs with AI agent integration. Token-efficient, zero dependencies.',
+      uk: 'CLI-інструмент для аналізу Grafana Loki логів з AI агентом. Без залежностей, ефективний.',
+    },
+    github: 'https://github.com/dstekanov/grafana-log-analyzer',
+    tags: ['ai', 'qa', 'cli'],
+    icon: '📊',
+    status: 'wip',
+  },
+  {
+    id: 3,
+    title: 'qa-dashboard',
+    description: {
+      en: 'Modern dashboard for visualizing QA test results with React, Material-UI, and a REST API.',
+      uk: 'Сучасний дашборд для візуалізації результатів QA-тестів з React, Material-UI та REST API.',
+    },
+    github: 'https://github.com/dstekanov/qa-dashboard',
+    link: 'https://dstekanov.github.io/qa-dashboard/',
+    tags: ['qa', 'react', 'dashboard'],
+    icon: '🔎',
+    status: 'done',
+  },
+  {
+    id: 4,
+    title: 'apple-health-ai',
+    description: {
+      en: 'Turn Apple Health exports into AI-readable markdown reports for sleep, heart rate, and activity insights.',
+      uk: 'Перетворює експорт Apple Health на AI-читабельні звіти про сон, пульс та активність.',
+    },
+    github: 'https://github.com/dstekanov/apple-health-ai',
+    tags: ['ai', 'health'],
+    icon: '🍎',
+    status: 'wip',
+  },
+  {
+    id: 5,
+    title: 'awesome-sdet-collection',
+    description: {
+      en: 'Curated list of tools, frameworks, and AI agent skills for SDETs and QA engineers.',
+      uk: 'Підбірка інструментів, фреймворків та AI-навичок для SDET та QA інженерів.',
+    },
+    github: 'https://github.com/dstekanov/awesome-sdet-collection',
+    tags: ['qa', 'collection'],
+    icon: '⭐',
+    status: 'done',
+  },
+  {
+    id: 6,
+    title: 'tictactoe-project',
+    description: {
+      en: 'Classic Tic-Tac-Toe with an unbeatable minimax AI. Can you outsmart the machine?',
+      uk: 'Класичний хрестики-нулики з непереможним мінімакс AI. Спробуй перехитрити машину.',
+    },
+    github: 'https://github.com/dstekanov/tictactoe-project',
+    link: 'https://dstekanov.github.io/tictactoe-project',
+    tags: ['fan', 'game', 'ai'],
+    icon: '🎮',
+    status: 'done',
+  },
+];
