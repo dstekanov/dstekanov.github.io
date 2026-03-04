@@ -31,32 +31,6 @@
     color: var(--light);
     font-family: 'Martel', serif;
     overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* Custom cursor */
-  .cursor {
-    width: 12px; height: 12px;
-    background: var(--pulse);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s, background 0.3s, width 0.3s, height 0.3s;
-    mix-blend-mode: screen;
-  }
-  .cursor-trail {
-    width: 40px; height: 40px;
-    border: 1px solid var(--pulse);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: left 0.15s ease, top 0.15s ease, border-color 0.3s;
-    mix-blend-mode: screen;
-    opacity: 0.4;
   }
 
   /* Noise overlay */
@@ -609,7 +583,7 @@
     font-size: 0.6rem;
     letter-spacing: 0.2em;
     padding: 7px 14px;
-    cursor: none;
+    cursor: pointer;
     transition: border-color 0.2s, color 0.2s;
     backdrop-filter: blur(8px);
   }
@@ -634,8 +608,6 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-trail" id="cursorTrail"></div>
 <button id="lang-toggle" onclick="toggleLang()">EN</button>
 
 <!-- INTRO -->
@@ -915,18 +887,6 @@
     currentLang = currentLang === 'uk' ? 'en' : 'uk';
     applyLang(currentLang);
   }
-
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const trail = document.getElementById('cursorTrail');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-    setTimeout(() => {
-      trail.style.left = e.clientX + 'px';
-      trail.style.top = e.clientY + 'px';
-    }, 80);
-  });
 
   // Scroll reveal
   const revealEls = document.querySelectorAll('.reveal');
